@@ -1,7 +1,3 @@
-/**
- *Submitted for verification at BscScan.com on 2021-01-18
-*/
-
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.6.12;
@@ -653,8 +649,8 @@ abstract contract Ownable is Context {
 }
 
 
-contract SWAMP is ERC20, Ownable {
-     constructor() public ERC20("Swampy", "SWAMP") {
+contract GALAXY is ERC20, Ownable {
+     constructor() public ERC20("Galaxy Finance", "GBSC") {
         _mint(msg.sender, 10_420_000000_000000_000000);
     }
 
