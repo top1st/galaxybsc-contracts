@@ -1,3 +1,5 @@
+// Root file: contracts\TimelockController.sol
+
 /**
  *Submitted for verification at BscScan.com on 2021-01-09
 */
@@ -9,7 +11,6 @@ pragma solidity 0.6.12;
 pragma solidity >=0.6.9 <0.8.0;
 pragma experimental ABIEncoderV2;
 
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/math/SafeMath.sol";
 pragma solidity >=0.6.0 <0.8.0;
 
 /**
@@ -381,7 +382,7 @@ library SafeERC20 {
     }
 }
 
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/EnumerableSet.sol";
+
 library EnumerableSet {
     // To implement this library for multiple types with as little code
     // repetition as possible, we write it in terms of a generic Set type with
@@ -701,7 +702,7 @@ library EnumerableSet {
     }
 }
 
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Address.sol";
+
 
 pragma solidity >=0.6.2 <0.8.0;
 
@@ -954,7 +955,6 @@ library Address {
     }
 }
 
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/GSN/Context.sol";
 pragma solidity >=0.6.0 <0.8.0;
 
 /*
@@ -978,7 +978,6 @@ abstract contract Context {
     }
 }
 
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/AccessControl.sol";
 pragma solidity >=0.6.0 <0.8.0;
 
 /**
@@ -1261,7 +1260,7 @@ interface IStrategy {
     function noTimeLockFunc3() external;
 }
 
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/TimelockController.sol";
+
 /**
  * @dev Contract module which acts as a timelocked controller. When set as the
  * owner of an `Ownable` smart contract, it enforces a timelock on all

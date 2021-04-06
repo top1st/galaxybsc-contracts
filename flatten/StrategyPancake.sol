@@ -1,8 +1,10 @@
+// Root file: contracts\StrategyPancake.sol
+
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.6.12;
 
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/IERC20.sol";
+
 abstract contract Context {
     function _msgSender() internal view virtual returns (address payable) {
         return msg.sender;
@@ -592,7 +594,7 @@ contract ERC20 is Context, IERC20 {
     ) internal virtual {}
 }
 
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/SafeERC20.sol";
+
 library Address {
     /**
      * @dev Returns true if `account` is a contract.
@@ -956,7 +958,7 @@ library SafeERC20 {
     }
 }
 
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/EnumerableSet.sol";
+
 library EnumerableSet {
     // To implement this library for multiple types with as little code
     // repetition as possible, we write it in terms of a generic Set type with
@@ -1276,7 +1278,7 @@ library EnumerableSet {
     }
 }
 
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
+
 abstract contract Ownable is Context {
     address private _owner;
 
@@ -1695,7 +1697,7 @@ contract Pausable is Context {
     }
 }
 
-contract StrategyGoose is Ownable, ReentrancyGuard, Pausable {
+contract StrategyPancake is Ownable, ReentrancyGuard, Pausable {
     // Maximises yields in pancakeswap
 
     using SafeMath for uint256;
@@ -1854,7 +1856,11 @@ contract StrategyGoose is Ownable, ReentrancyGuard, Pausable {
         wantLockedTotal = wantLockedTotal.add(wantAmt);
         IERC20(wantAddress).safeIncreaseAllowance(farmContractAddress, wantAmt);
 
-        IPancakeswapFarm(farmContractAddress).deposit(pid, wantAmt);
+        if (isCAKEStaking) {
+            IPancakeswapFarm(farmContractAddress).enterStaking(wantAmt); // Just for CAKE staking, we dont use deposit()
+        } else {
+            IPancakeswapFarm(farmContractAddress).deposit(pid, wantAmt);
+        }
     }
 
     function withdraw(address _userAddress, uint256 _wantAmt)
@@ -1866,7 +1872,11 @@ contract StrategyGoose is Ownable, ReentrancyGuard, Pausable {
         require(_wantAmt > 0, "_wantAmt <= 0");
 
         if (isNativeVault) {
-            IPancakeswapFarm(farmContractAddress).withdraw(pid, _wantAmt);
+            if (isCAKEStaking) {
+                IPancakeswapFarm(farmContractAddress).leaveStaking(_wantAmt); // Just for CAKE staking, we dont use withdraw()
+            } else {
+                IPancakeswapFarm(farmContractAddress).withdraw(pid, _wantAmt);
+            }
         }
 
         uint256 wantAmt = IERC20(wantAddress).balanceOf(address(this));
@@ -1901,7 +1911,11 @@ contract StrategyGoose is Ownable, ReentrancyGuard, Pausable {
         }
 
         // Harvest farm tokens
-        IPancakeswapFarm(farmContractAddress).withdraw(pid, 0);
+        if (isCAKEStaking) {
+            IPancakeswapFarm(farmContractAddress).leaveStaking(0); // Just for CAKE staking, we dont use withdraw()
+        } else {
+            IPancakeswapFarm(farmContractAddress).withdraw(pid, 0);
+        }
 
         // Converts farm tokens into want tokens
         uint256 earnedAmt = IERC20(earnedAddress).balanceOf(address(this));

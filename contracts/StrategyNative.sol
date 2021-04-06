@@ -2,7 +2,7 @@
 
 pragma solidity 0.6.12;
 
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol";
+
 abstract contract Context {
     function _msgSender() internal view virtual returns (address payable) {
         return msg.sender;
@@ -592,7 +592,7 @@ contract ERC20 is Context, IERC20 {
     ) internal virtual {}
 }
 
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/SafeERC20.sol";
+
 library Address {
     /**
      * @dev Returns true if `account` is a contract.
@@ -956,7 +956,7 @@ library SafeERC20 {
     }
 }
 
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/EnumerableSet.sol";
+
 library EnumerableSet {
     // To implement this library for multiple types with as little code
     // repetition as possible, we write it in terms of a generic Set type with
@@ -1276,7 +1276,7 @@ library EnumerableSet {
     }
 }
 
-// import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
+
 abstract contract Ownable is Context {
     address private _owner;
 
@@ -1335,6 +1335,245 @@ abstract contract Ownable is Context {
     }
 }
 
+interface IPancakeswapFarm {
+    function poolLength() external view returns (uint256);
+
+    function userInfo() external view returns (uint256);
+
+    // Return reward multiplier over the given _from to _to block.
+    function getMultiplier(uint256 _from, uint256 _to)
+        external
+        view
+        returns (uint256);
+
+    // View function to see pending CAKEs on frontend.
+    function pendingCake(uint256 _pid, address _user)
+        external
+        view
+        returns (uint256);
+
+    // Deposit LP tokens to MasterChef for CAKE allocation.
+    function deposit(uint256 _pid, uint256 _amount) external;
+
+    // Withdraw LP tokens from MasterChef.
+    function withdraw(uint256 _pid, uint256 _amount) external;
+
+    // Stake CAKE tokens to MasterChef
+    function enterStaking(uint256 _amount) external;
+
+    // Withdraw CAKE tokens from STAKING.
+    function leaveStaking(uint256 _amount) external;
+
+    // Withdraw without caring about rewards. EMERGENCY ONLY.
+    function emergencyWithdraw(uint256 _pid) external;
+}
+
+interface IPancakeRouter01 {
+    function factory() external pure returns (address);
+
+    function WETH() external pure returns (address);
+
+    function addLiquidity(
+        address tokenA,
+        address tokenB,
+        uint256 amountADesired,
+        uint256 amountBDesired,
+        uint256 amountAMin,
+        uint256 amountBMin,
+        address to,
+        uint256 deadline
+    )
+        external
+        returns (
+            uint256 amountA,
+            uint256 amountB,
+            uint256 liquidity
+        );
+
+    function addLiquidityETH(
+        address token,
+        uint256 amountTokenDesired,
+        uint256 amountTokenMin,
+        uint256 amountETHMin,
+        address to,
+        uint256 deadline
+    )
+        external
+        payable
+        returns (
+            uint256 amountToken,
+            uint256 amountETH,
+            uint256 liquidity
+        );
+
+    function removeLiquidity(
+        address tokenA,
+        address tokenB,
+        uint256 liquidity,
+        uint256 amountAMin,
+        uint256 amountBMin,
+        address to,
+        uint256 deadline
+    ) external returns (uint256 amountA, uint256 amountB);
+
+    function removeLiquidityETH(
+        address token,
+        uint256 liquidity,
+        uint256 amountTokenMin,
+        uint256 amountETHMin,
+        address to,
+        uint256 deadline
+    ) external returns (uint256 amountToken, uint256 amountETH);
+
+    function removeLiquidityWithPermit(
+        address tokenA,
+        address tokenB,
+        uint256 liquidity,
+        uint256 amountAMin,
+        uint256 amountBMin,
+        address to,
+        uint256 deadline,
+        bool approveMax,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external returns (uint256 amountA, uint256 amountB);
+
+    function removeLiquidityETHWithPermit(
+        address token,
+        uint256 liquidity,
+        uint256 amountTokenMin,
+        uint256 amountETHMin,
+        address to,
+        uint256 deadline,
+        bool approveMax,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external returns (uint256 amountToken, uint256 amountETH);
+
+    function swapExactTokensForTokens(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external returns (uint256[] memory amounts);
+
+    function swapTokensForExactTokens(
+        uint256 amountOut,
+        uint256 amountInMax,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external returns (uint256[] memory amounts);
+
+    function swapExactETHForTokens(
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external payable returns (uint256[] memory amounts);
+
+    function swapTokensForExactETH(
+        uint256 amountOut,
+        uint256 amountInMax,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external returns (uint256[] memory amounts);
+
+    function swapExactTokensForETH(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external returns (uint256[] memory amounts);
+
+    function swapETHForExactTokens(
+        uint256 amountOut,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external payable returns (uint256[] memory amounts);
+
+    function quote(
+        uint256 amountA,
+        uint256 reserveA,
+        uint256 reserveB
+    ) external pure returns (uint256 amountB);
+
+    function getAmountOut(
+        uint256 amountIn,
+        uint256 reserveIn,
+        uint256 reserveOut
+    ) external pure returns (uint256 amountOut);
+
+    function getAmountIn(
+        uint256 amountOut,
+        uint256 reserveIn,
+        uint256 reserveOut
+    ) external pure returns (uint256 amountIn);
+
+    function getAmountsOut(uint256 amountIn, address[] calldata path)
+        external
+        view
+        returns (uint256[] memory amounts);
+
+    function getAmountsIn(uint256 amountOut, address[] calldata path)
+        external
+        view
+        returns (uint256[] memory amounts);
+}
+
+interface IPancakeRouter02 is IPancakeRouter01 {
+    function removeLiquidityETHSupportingFeeOnTransferTokens(
+        address token,
+        uint256 liquidity,
+        uint256 amountTokenMin,
+        uint256 amountETHMin,
+        address to,
+        uint256 deadline
+    ) external returns (uint256 amountETH);
+
+    function removeLiquidityETHWithPermitSupportingFeeOnTransferTokens(
+        address token,
+        uint256 liquidity,
+        uint256 amountTokenMin,
+        uint256 amountETHMin,
+        address to,
+        uint256 deadline,
+        bool approveMax,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external returns (uint256 amountETH);
+
+    function swapExactTokensForTokensSupportingFeeOnTransferTokens(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external;
+
+    function swapExactETHForTokensSupportingFeeOnTransferTokens(
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external payable;
+
+    function swapExactTokensForETHSupportingFeeOnTransferTokens(
+        uint256 amountIn,
+        uint256 amountOutMin,
+        address[] calldata path,
+        address to,
+        uint256 deadline
+    ) external;
+}
+
 // "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/ReentrancyGuard.sol";
 abstract contract ReentrancyGuard {
     // Booleans are more expensive than uint256 or any type that takes up a full
@@ -1379,344 +1618,295 @@ abstract contract ReentrancyGuard {
     }
 }
 
-// Mint
-abstract contract NATIVEToken is ERC20 {
-    function mint(address _to, uint256 _amount) public virtual;
+// "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Pausable.sol";
+contract Pausable is Context {
+    /**
+     * @dev Emitted when the pause is triggered by `account`.
+     */
+    event Paused(address account);
+
+    /**
+     * @dev Emitted when the pause is lifted by `account`.
+     */
+    event Unpaused(address account);
+
+    bool private _paused;
+
+    /**
+     * @dev Initializes the contract in unpaused state.
+     */
+    constructor() internal {
+        _paused = false;
+    }
+
+    /**
+     * @dev Returns true if the contract is paused, and false otherwise.
+     */
+    function paused() public view returns (bool) {
+        return _paused;
+    }
+
+    /**
+     * @dev Modifier to make a function callable only when the contract is not paused.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
+     */
+    modifier whenNotPaused() {
+        require(!_paused, "Pausable: paused");
+        _;
+    }
+
+    /**
+     * @dev Modifier to make a function callable only when the contract is paused.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
+     */
+    modifier whenPaused() {
+        require(_paused, "Pausable: not paused");
+        _;
+    }
+
+    /**
+     * @dev Triggers stopped state.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
+     */
+    function _pause() internal virtual whenNotPaused {
+        _paused = true;
+        emit Paused(_msgSender());
+    }
+
+    /**
+     * @dev Returns to normal state.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
+     */
+    function _unpause() internal virtual whenPaused {
+        _paused = false;
+        emit Unpaused(_msgSender());
+    }
 }
 
-// For interacting with our own strategy
-interface IStrategy {
-    // Total want tokens managed by strategy
-    function wantLockedTotal() external view returns (uint256);
+contract StrategyNative is Ownable, ReentrancyGuard, Pausable {
+    // Strategy used to only stake native tokens
 
-    // Sum of all shares of users to wantLockedTotal
-    function sharesTotal() external view returns (uint256);
+    using SafeMath for uint256;
+    using SafeERC20 for IERC20;
 
-    // Main want token compounding function
-    function earn() external;
+    bool public isCAKEStaking; // always set to FALSE
+    bool public isNativeVault; // always set to FALSE
 
-    // Transfer want tokens autoFarm -> strategy
+    address public farmContractAddress; // not used, funds stay on strategy address
+    uint256 public pid; // not used
+    address public wantAddress;
+    address public token0Address; // not used
+    address public token1Address; // not used
+    address public earnedAddress;
+    address public uniRouterAddress; // not used, no buyback
+
+    address public constant wbnbAddress =
+        0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c; // not used
+    address public nativeFarmAddress;
+    address public NATIVEAddress;
+    address public govAddress; // timelock contract
+    bool public onlyGov = true;
+
+    uint256 public lastEarnBlock = 0;
+    uint256 public wantLockedTotal = 0;
+    uint256 public sharesTotal = 0;
+
+    uint256 public controllerFee = 20;
+    uint256 public constant controllerFeeMax = 10000; // 100 = 1%
+    uint256 public constant controllerFeeUL = 300;
+
+    // not used, no buyback
+    uint256 public buyBackRate = 150; // not used
+    uint256 public constant buyBackRateMax = 10000; // not used
+    uint256 public constant buyBackRateUL = 800; // not used
+
+    /* This is vanity address -  For instance an address 0x000000000000000000000000000000000000dEaD for which it's
+       absolutely impossible to generate a private key with today's computers. */
+    address public constant buyBackAddress = 0x000000000000000000000000000000000000dEaD;
+    uint256 public entranceFeeFactor = 9990; // < 0.1% entrance fee - goes to pool + prevents front-running
+    uint256 public constant entranceFeeFactorMax = 10000;
+    uint256 public constant entranceFeeFactorLL = 9950; // 0.5% is the max entrance fee settable. LL = lowerlimit
+
+    address[] public earnedToNATIVEPath; // not used
+    address[] public earnedToToken0Path; // not used
+    address[] public earnedToToken1Path; // not used
+    address[] public token0ToEarnedPath; // not used
+    address[] public token1ToEarnedPath; // not used
+
+    constructor(
+        address _nativeFarmAddress,
+        address _NATIVEAddress,
+        bool _isCAKEStaking,
+        bool _isNativeVault,
+        address _farmContractAddress,
+        uint256 _pid,
+        address _wantAddress,
+        address _token0Address,
+        address _token1Address,
+        address _earnedAddress,
+        address _uniRouterAddress
+    ) public {
+        govAddress = msg.sender;
+        nativeFarmAddress = _nativeFarmAddress;
+        NATIVEAddress = _NATIVEAddress;
+
+        isCAKEStaking = _isCAKEStaking;
+        isNativeVault = _isNativeVault;
+        wantAddress = _wantAddress;
+        farmContractAddress = _farmContractAddress;
+        pid = _pid;
+        token0Address = _token0Address;
+        token1Address = _token1Address;
+        earnedAddress = _earnedAddress;
+        uniRouterAddress = _uniRouterAddress;
+
+        transferOwnership(nativeFarmAddress);
+    }
+
+    // Receives new deposits from user
     function deposit(address _userAddress, uint256 _wantAmt)
-        external
-        returns (uint256);
+        public
+        onlyOwner
+        whenNotPaused
+        returns (uint256)
+    {
+        IERC20(wantAddress).safeTransferFrom(
+            address(msg.sender),
+            address(this),
+            _wantAmt
+        );
 
-    // Transfer want tokens strategy -> autoFarm
+        uint256 sharesAdded = _wantAmt;
+        if (wantLockedTotal > 0) {
+            sharesAdded = _wantAmt
+                .mul(sharesTotal)
+                .mul(entranceFeeFactor)
+                .div(wantLockedTotal)
+                .div(entranceFeeFactorMax);
+
+            // Fix if pool stuck
+            if (sharesAdded == 0 && sharesTotal == 0) {
+                sharesAdded = _wantAmt
+                    .mul(entranceFeeFactor)
+                    .div(wantLockedTotal)
+                    .div(entranceFeeFactorMax);
+            }
+        }
+        sharesTotal = sharesTotal.add(sharesAdded);
+
+        if (isNativeVault) {
+            _farm();
+        } else {
+            wantLockedTotal = wantLockedTotal.add(_wantAmt);
+        }
+
+        return sharesAdded;
+    }
+
+    function farm() public nonReentrant {
+        _farm();
+    }
+
+    // not used
+    function _farm() internal {}
+
     function withdraw(address _userAddress, uint256 _wantAmt)
-        external
-        returns (uint256);
+        public
+        onlyOwner
+        nonReentrant
+        returns (uint256)
+    {
+        require(_wantAmt > 0, "_wantAmt <= 0");
+
+        uint256 wantAmt = IERC20(wantAddress).balanceOf(address(this));
+        if (_wantAmt > wantAmt) {
+            _wantAmt = wantAmt;
+        }
+
+        if (wantLockedTotal < _wantAmt) {
+            _wantAmt = wantLockedTotal;
+        }
+
+        uint256 sharesRemoved = _wantAmt.mul(sharesTotal).div(wantLockedTotal);
+        if (sharesRemoved > sharesTotal) {
+            sharesRemoved = sharesTotal;
+        }
+        sharesTotal = sharesTotal.sub(sharesRemoved);
+        wantLockedTotal = wantLockedTotal.sub(_wantAmt);
+
+        IERC20(wantAddress).safeTransfer(nativeFarmAddress, _wantAmt);
+
+        return sharesRemoved;
+    }
+
+    // not used
+    function earn() public whenNotPaused {}
+    // not used
+    function buyBack(uint256 _earnedAmt) internal returns (uint256) {}
+    // not used
+    function distributeFees(uint256 _earnedAmt) internal returns (uint256) {}
+    // not used
+    function convertDustToEarned() public whenNotPaused {}
+
+    function pause() public {
+        require(msg.sender == govAddress, "Not authorised");
+        _pause();
+    }
+
+    function unpause() external {
+        require(msg.sender == govAddress, "Not authorised");
+        _unpause();
+    }
+
+    function setEntranceFeeFactor(uint256 _entranceFeeFactor) public {
+        require(msg.sender == govAddress, "Not authorised");
+        require(_entranceFeeFactor > entranceFeeFactorLL, "!safe - too low");
+        require(_entranceFeeFactor <= entranceFeeFactorMax, "!safe - too high");
+        entranceFeeFactor = _entranceFeeFactor;
+    }
+
+    function setControllerFee(uint256 _controllerFee) public {
+        require(msg.sender == govAddress, "Not authorised");
+        require(_controllerFee <= controllerFeeUL, "too high");
+        controllerFee = _controllerFee;
+    }
+
+    function setbuyBackRate(uint256 _buyBackRate) public {
+        require(msg.sender == govAddress, "Not authorised");
+        require(buyBackRate <= buyBackRateUL, "too high");
+        buyBackRate = _buyBackRate;
+    }
+
+    function setGov(address _govAddress) public {
+        require(msg.sender == govAddress, "!gov");
+        govAddress = _govAddress;
+    }
+
+    function setOnlyGov(bool _onlyGov) public {
+        require(msg.sender == govAddress, "!gov");
+        onlyGov = _onlyGov;
+    }
 
     function inCaseTokensGetStuck(
         address _token,
         uint256 _amount,
         address _to
-    ) external;
-}
-
-contract NativeFarm is Ownable, ReentrancyGuard {
-    using SafeMath for uint256;
-    using SafeERC20 for IERC20;
-
-    // Info of each user.
-    struct UserInfo {
-        uint256 shares; // How many LP tokens the user has provided.
-        uint256 rewardDebt; // Reward debt. See explanation below.
-
-        // We do some fancy math here. Basically, any point in time, the amount of AUTO
-        // entitled to a user but is pending to be distributed is:
-        //
-        //   amount = user.shares / sharesTotal * wantLockedTotal
-        //   pending reward = (amount * pool.accNATIVEPerShare) - user.rewardDebt
-        //
-        // Whenever a user deposits or withdraws want tokens to a pool. Here's what happens:
-        //   1. The pool's `accNATIVEPerShare` (and `lastRewardBlock`) gets updated.
-        //   2. User receives the pending reward sent to his/her address.
-        //   3. User's `amount` gets updated.
-        //   4. User's `rewardDebt` gets updated.
-    }
-
-    struct PoolInfo {
-        IERC20 want; // Address of the want token.
-        uint256 allocPoint; // How many allocation points assigned to this pool. NATIVE to distribute per block.
-        uint256 lastRewardBlock; // Last block number that NATIVE distribution occurs.
-        uint256 accNATIVEPerShare; // Accumulated NATIVE per share, times 1e12. See below.
-        address strat; // Strategy address that will auto compound want tokens
-    }
-
-    // Token address
-    address public NATIVE = 0xc5A49b4CBe004b6FD55B30Ba1dE6AC360FF9765d;
-    // Owner reward per block: 10% ==> 11.11%
-    uint256 public ownerNATIVEReward = 1111;
-    // Native total supply: 2 mil = 2000000e18
-    uint256 public NATIVEMaxSupply = 2000000e18;
-    // Natives per block: (0.190258751902588 - owner 10%)
-    uint256 public NATIVEPerBlock = 171232876712329000; // NATIVE tokens created per block
-    // Approx 8/3/2021
-    uint256 public startBlock = 5496000; // https://bscscan.com/block/countdown/5496000
-
-    PoolInfo[] public poolInfo; // Info of each pool.
-    mapping(uint256 => mapping(address => UserInfo)) public userInfo; // Info of each user that stakes LP tokens.
-    uint256 public totalAllocPoint = 0; // Total allocation points. Must be the sum of all allocation points in all pools.
-
-    event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
-    event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
-    event EmergencyWithdraw(
-        address indexed user,
-        uint256 indexed pid,
-        uint256 amount
-    );
-
-    function poolLength() external view returns (uint256) {
-        return poolInfo.length;
-    }
-
-    // Add a new lp to the pool. Can only be called by the owner.
-    // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do. (Only if want tokens are stored here.)
-    function add(
-        uint256 _allocPoint,
-        IERC20 _want,
-        bool _withUpdate,
-        address _strat
-    ) public onlyOwner {
-        if (_withUpdate) {
-            massUpdatePools();
-        }
-        uint256 lastRewardBlock = block.number > startBlock ? block.number : startBlock;
-        totalAllocPoint = totalAllocPoint.add(_allocPoint);
-        poolInfo.push(
-            PoolInfo({
-                want: _want,
-                allocPoint: _allocPoint,
-                lastRewardBlock: lastRewardBlock,
-                accNATIVEPerShare: 0,
-                strat: _strat
-            })
-        );
-    }
-
-    // Update the given pool's NATIVE allocation point. Can only be called by the owner.
-    function set(
-        uint256 _pid,
-        uint256 _allocPoint,
-        bool _withUpdate
-    ) public onlyOwner {
-        if (_withUpdate) {
-            massUpdatePools();
-        }
-        totalAllocPoint = totalAllocPoint.sub(poolInfo[_pid].allocPoint).add(
-            _allocPoint
-        );
-        poolInfo[_pid].allocPoint = _allocPoint;
-    }
-
-    // Return reward multiplier over the given _from to _to block.
-    function getMultiplier(uint256 _from, uint256 _to)
-        public
-        view
-        returns (uint256)
-    {
-        if (IERC20(NATIVE).totalSupply() >= NATIVEMaxSupply) {
-            return 0;
-        }
-        return _to.sub(_from);
-    }
-
-    // View function to see pending AUTO on frontend.
-    function pendingNATIVE(uint256 _pid, address _user)
-        external
-        view
-        returns (uint256)
-    {
-        PoolInfo storage pool = poolInfo[_pid];
-        UserInfo storage user = userInfo[_pid][_user];
-        uint256 accNATIVEPerShare = pool.accNATIVEPerShare;
-        uint256 sharesTotal = IStrategy(pool.strat).sharesTotal();
-        if (block.number > pool.lastRewardBlock && sharesTotal != 0) {
-            uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-            uint256 NATIVEReward =
-                multiplier.mul(NATIVEPerBlock)
-                          .mul(pool.allocPoint)
-                          .div(totalAllocPoint);
-            accNATIVEPerShare = accNATIVEPerShare.add(
-                NATIVEReward.mul(1e12).div(sharesTotal)
-            );
-        }
-        return user.shares.mul(accNATIVEPerShare).div(1e12).sub(user.rewardDebt);
-    }
-
-    // View function to see staked Want tokens on frontend.
-    function stakedWantTokens(uint256 _pid, address _user)
-        external
-        view
-        returns (uint256)
-    {
-        PoolInfo storage pool = poolInfo[_pid];
-        UserInfo storage user = userInfo[_pid][_user];
-
-        uint256 sharesTotal = IStrategy(pool.strat).sharesTotal();
-        uint256 wantLockedTotal =
-            IStrategy(poolInfo[_pid].strat).wantLockedTotal();
-        if (sharesTotal == 0) {
-            return 0;
-        }
-        return user.shares.mul(wantLockedTotal).div(sharesTotal);
-    }
-
-    // Update reward variables for all pools. Be careful of gas spending!
-    function massUpdatePools() public {
-        uint256 length = poolInfo.length;
-        for (uint256 pid = 0; pid < length; ++pid) {
-            updatePool(pid);
-        }
-    }
-
-    // Update reward variables of the given pool to be up-to-date.
-    function updatePool(uint256 _pid) public {
-        PoolInfo storage pool = poolInfo[_pid];
-        if (block.number <= pool.lastRewardBlock) {
-            return;
-        }
-        uint256 sharesTotal = IStrategy(pool.strat).sharesTotal();
-        if (sharesTotal == 0) {
-            pool.lastRewardBlock = block.number;
-            return;
-        }
-        uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-        if (multiplier <= 0) {
-            return;
-        }
-        uint256 NATIVEReward =
-            multiplier.mul(NATIVEPerBlock).mul(pool.allocPoint).div(
-                totalAllocPoint
-            );
-
-        NATIVEToken(NATIVE).mint(
-            owner(),
-            NATIVEReward.mul(ownerNATIVEReward).div(10000)
-        );
-        NATIVEToken(NATIVE).mint(address(this), NATIVEReward);
-
-        pool.accNATIVEPerShare = pool.accNATIVEPerShare.add(
-            NATIVEReward.mul(1e12).div(sharesTotal)
-        );
-        pool.lastRewardBlock = block.number;
-    }
-
-    // Want tokens moved from user -> AUTOFarm (AUTO allocation) -> Strat (compounding)
-    function deposit(uint256 _pid, uint256 _wantAmt) public nonReentrant {
-        updatePool(_pid);
-        PoolInfo storage pool = poolInfo[_pid];
-        UserInfo storage user = userInfo[_pid][msg.sender];
-
-        if (user.shares > 0) {
-            uint256 pending =
-                user.shares.mul(pool.accNATIVEPerShare).div(1e12).sub(
-                    user.rewardDebt
-                );
-            if (pending > 0) {
-                safeNATIVETransfer(msg.sender, pending);
-            }
-        }
-        if (_wantAmt > 0) {
-            pool.want.safeTransferFrom(
-                address(msg.sender),
-                address(this),
-                _wantAmt
-            );
-
-            pool.want.safeIncreaseAllowance(pool.strat, _wantAmt);
-            uint256 sharesAdded =
-                IStrategy(poolInfo[_pid].strat).deposit(msg.sender, _wantAmt);
-            user.shares = user.shares.add(sharesAdded);
-        }
-        user.rewardDebt = user.shares.mul(pool.accNATIVEPerShare).div(1e12);
-        emit Deposit(msg.sender, _pid, _wantAmt);
-    }
-
-    // Withdraw LP tokens from MasterChef.
-    function withdraw(uint256 _pid, uint256 _wantAmt) public nonReentrant {
-        updatePool(_pid);
-
-        PoolInfo storage pool = poolInfo[_pid];
-        UserInfo storage user = userInfo[_pid][msg.sender];
-
-        uint256 wantLockedTotal =
-            IStrategy(poolInfo[_pid].strat).wantLockedTotal();
-        uint256 sharesTotal = IStrategy(poolInfo[_pid].strat).sharesTotal();
-
-        require(user.shares > 0, "user.shares is 0");
-        require(sharesTotal > 0, "sharesTotal is 0");
-
-        // Withdraw pending AUTO
-        uint256 pending =
-            user.shares.mul(pool.accNATIVEPerShare).div(1e12).sub(
-                user.rewardDebt
-            );
-        if (pending > 0) {
-            safeNATIVETransfer(msg.sender, pending);
-        }
-
-        // Withdraw want tokens
-        uint256 amount = user.shares.mul(wantLockedTotal).div(sharesTotal);
-        if (_wantAmt > amount) {
-            _wantAmt = amount;
-        }
-        if (_wantAmt > 0) {
-            uint256 sharesRemoved =
-                IStrategy(poolInfo[_pid].strat).withdraw(msg.sender, _wantAmt);
-
-            if (sharesRemoved > user.shares) {
-                user.shares = 0;
-            } else {
-                user.shares = user.shares.sub(sharesRemoved);
-            }
-
-            uint256 wantBal = IERC20(pool.want).balanceOf(address(this));
-            if (wantBal < _wantAmt) {
-                _wantAmt = wantBal;
-            }
-            pool.want.safeTransfer(address(msg.sender), _wantAmt);
-        }
-        user.rewardDebt = user.shares.mul(pool.accNATIVEPerShare).div(1e12);
-        emit Withdraw(msg.sender, _pid, _wantAmt);
-    }
-
-    function withdrawAll(uint256 _pid) public nonReentrant {
-        withdraw(_pid, uint256(-1));
-    }
-
-    // Withdraw without caring about rewards. EMERGENCY ONLY.
-    function emergencyWithdraw(uint256 _pid) public nonReentrant {
-        PoolInfo storage pool = poolInfo[_pid];
-        UserInfo storage user = userInfo[_pid][msg.sender];
-
-        uint256 wantLockedTotal =
-            IStrategy(poolInfo[_pid].strat).wantLockedTotal();
-        uint256 sharesTotal = IStrategy(poolInfo[_pid].strat).sharesTotal();
-        uint256 amount = user.shares.mul(wantLockedTotal).div(sharesTotal);
-
-        IStrategy(poolInfo[_pid].strat).withdraw(msg.sender, amount);
-
-        pool.want.safeTransfer(address(msg.sender), amount);
-        emit EmergencyWithdraw(msg.sender, _pid, amount);
-        user.shares = 0;
-        user.rewardDebt = 0;
-    }
-
-    // Safe AUTO transfer function, just in case if rounding error causes pool to not have enough
-    function safeNATIVETransfer(address _to, uint256 _NATIVEAmt) internal {
-        uint256 NATIVEBal = IERC20(NATIVE).balanceOf(address(this));
-        if (_NATIVEAmt > NATIVEBal) {
-            IERC20(NATIVE).transfer(_to, NATIVEBal);
-        } else {
-            IERC20(NATIVE).transfer(_to, _NATIVEAmt);
-        }
-    }
-
-    function inCaseTokensGetStuck(address _token, uint256 _amount)
-        public
-        onlyOwner
-    {
-        require(_token != NATIVE, "!safe");
-        IERC20(_token).safeTransfer(msg.sender, _amount);
+    ) public {
+        require(msg.sender == govAddress, "!gov");
+        require(_token != earnedAddress, "!safe");
+        require(_token != wantAddress, "!safe");
+        IERC20(_token).safeTransfer(_to, _amount);
     }
 }

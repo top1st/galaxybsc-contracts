@@ -1,0 +1,31 @@
+{
+  "name": "galaxybsc-contracts",
+  "version": "1.0.0",
+  "description": "galaxy bsc contracts",
+  "main": "index.js",
+  "scripts": {
+    "flatten": "waffle flatten",
+    "clean": "rimraf ./flatten ./artifacts ./cache ./abi",
+    "precompile": "yarn clean",
+    "compile": "hardhat compile && yarn flatten",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/top1st/galaxybsc-contracts.git"
+  },
+  "author": "top1st riguang102@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/top1st/galaxybsc-contracts/issues"
+  },
+  "homepage": "https://github.com/top1st/galaxybsc-contracts#readme",
+  "dependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "ethereum-waffle": "^3.3.0",
+    "ethers": "^5.1.0",
+    "hardhat": "^2.1.2",
+    "hardhat-abi-exporter": "^2.2.0"
+  }
+}
